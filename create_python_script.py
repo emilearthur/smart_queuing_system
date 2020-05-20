@@ -56,16 +56,27 @@ class PersonDetect:
         self.output_shape=self.model.outputs[self.output_name].shape
 
     def load_model(self): 
-    '''
-    TODO: This method needs to be completed by you
-    '''
-        core=IECore
+        '''
+        TODO: This method needs to be completed by you
+        '''
+        core=IECore()
         self.net=core.load_network(network=self.model, device_name=self.device, num_requests=1)
-        
+
+    def preprocess_input(self, image):
+        '''
+        TODO: This method needs to be completed by you
+        '''
+        input_img_ = image
+        n,c,h,w = self.input_shape
+        image = cv2.resize(image,(w,h))
+        image = image.transpose((2, 0, 1))
+        image = image.reshape((n,c,h,w))
+        return input_img_, image 
+          
     def predict(self, image):
-    '''
-    TODO: This method needs to be completed by you
-    '''
+        '''
+        TODO: This method needs to be completed by you
+        '''
         input_img, image = preprocess_input(image)
         #input dictionary
         input_dict={self.input_name:image} 
@@ -79,9 +90,9 @@ class PersonDetect:
     
     
     def draw_outputs(self, coords, image):
-    '''
-    DONE: This method needs to be completed by you
-    '''
+        '''
+        DONE: This method needs to be completed by you
+        '''
         current_count=0
         det_list=[]
         
@@ -92,30 +103,20 @@ class PersonDetect:
                 xmax = int(object[5] * initial_w)
                 ymax = int(object[6] * initial_h)
                 
-                cv2.rectangle(frame, (xmin,ymin),(xmax, ymax), (0, 55, 255),1)
+                cv2.rectangle(image, (xmin,ymin),(xmax, ymax), (0, 55, 255),1)
                 
                 current_count += 1 
                 
                 det_list.append(object)
             
-        return frame, current_count, det_list
+        return image, current_count, det_list
 
-    def preprocess_outputs(self, outputs):
-    '''
-    TODO: This method needs to be completed by you
-    '''
-        raise NotImplementedError
+    #def preprocess_outputs(self, outputs):
+    #    '''
+    #    TODO: This method needs to be completed by you
+    #    '''
+    #    raise NotImplementedError
 
-    def preprocess_input(self, image):
-    '''
-    TODO: This method needs to be completed by you
-    '''
-        input_img_ = image
-        n,c,h,w = self.input_shape
-        image = cv2.resize(image,(w,h))
-        image = image.transpose((2, 0, 1))
-        image = image.reshape((n,c,h,w))
-        return input_img_, image 
         
 
 
