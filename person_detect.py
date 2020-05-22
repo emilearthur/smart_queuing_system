@@ -1,15 +1,13 @@
-%%writefile person_detect.py
 
 import numpy as np
 import time
-from openvino.inference_engine import IENetwork, IECore
+from openvino.inference_engine import IECore
 import os
 import cv2
 import argparse
 import sys
 
 core=IECore()
-
 
 class Queue:
     '''
@@ -25,13 +23,25 @@ class Queue:
         for q in self.queues:
             x_min, y_min, x_max, y_max=q
             frame=image[y_min:y_max, x_min:x_max]
-            yield frame
+            return frame
     
     def check_coords(self, coords):
         d={k+1:0 for k in range(len(self.queues))}
+        temp = ['0','1','2','3']
+        
         for coord in coords:
+            xmin=int(coord[3]*initial_w)
+            ymin=int(coord[4]*initial_h)
+            xmax=int(coord[5]*initial_w)
+            ymax=int(coord[6]*initial_h)
+            
+            temp[0]=xmin 
+            temp[1]=ymin 
+            temp[2]=xmax
+            temp[3]=ymax
+            
             for i, q in enumerate(self.queues):
-                if coord[0]>q[0] and coord[2]<q[2]:
+                if temp[0]>q[0] and temp[2]<q[2]:
                     d[i+1]+=1
         return d
 
@@ -59,13 +69,13 @@ class PersonDetect:
 
     def load_model(self): 
         '''
-        TODO: This method needs to be completed by you
+        DONE: This method needs to be completed by you
         '''
         self.net=core.load_network(network=self.model, device_name=self.device, num_requests=1)
 
     def preprocess_input(self, image):
         '''
-        TODO: This method needs to be completed by you
+        DONE: This method needs to be completed by you
         '''
         n,c,h,w = self.input_shape
         image = cv2.resize(image,(w,h))
@@ -75,7 +85,7 @@ class PersonDetect:
           
     def predict(self, image):
         '''
-        TODO: This method needs to be completed by you
+        DONE: This method needs to be completed by you
         '''
         input_img = image
         image = self.preprocess_input(image)
@@ -110,12 +120,6 @@ class PersonDetect:
                 det_list.append(object)
             
         return image, current_count, det_list
-
-    #def preprocess_outputs(self, outputs):
-    #    '''
-    #    TODO: This method needs to be completed by you
-    #    '''
-    #    raise NotImplementedError
 
         
 
