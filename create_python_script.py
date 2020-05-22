@@ -66,26 +66,25 @@ class PersonDetect:
         '''
         TODO: This method needs to be completed by you
         '''
-        input_img_ = image
         n,c,h,w = self.input_shape
         image = cv2.resize(image,(w,h))
         image = image.transpose((2, 0, 1))
         image = image.reshape((n,c,h,w))
-        return input_img_, image 
+        return image 
           
     def predict(self, image):
         '''
         TODO: This method needs to be completed by you
         '''
-        input_img, image = preprocess_input(image)
+        input_img = image
+        image = self.preprocess_input(image)
         #input dictionary
         input_dict={self.input_name:image} 
         #start asynchronous inference for specific request
         infer_request_handle = self.net.start_async(request_id=0, inputs=input_dict)
         infer_status = infer_request_handle.wait() 
         if infer_status == 0:
-            result = infer_request_handle.outputs[self.output_name]
-        
+            result = infer_request_handle.outputs[self.output_name]        
         return result, input_img
     
     
