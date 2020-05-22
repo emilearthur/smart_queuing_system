@@ -8,6 +8,8 @@ import cv2
 import argparse
 import sys
 
+core=IECore()
+
 
 class Queue:
     '''
@@ -46,7 +48,7 @@ class PersonDetect:
         self.threshold=threshold
 
         try:
-            self.model=IENetwork(self.model_structure, self.model_weights)
+            self.model=core.read_network(model=self.model_structure, weights=self.model_weights)
         except Exception as e:
             raise ValueError("Could not Initialise the network. Have you enterred the correct model path?")
 
@@ -59,7 +61,6 @@ class PersonDetect:
         '''
         TODO: This method needs to be completed by you
         '''
-        core=IECore()
         self.net=core.load_network(network=self.model, device_name=self.device, num_requests=1)
 
     def preprocess_input(self, image):
